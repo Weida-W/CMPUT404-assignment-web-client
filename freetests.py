@@ -160,6 +160,8 @@ class TestHTTPClient(unittest.TestCase):
         MyHTTPHandler.get = nothing_available
         http = httpclass.HTTPClient()
         req = http.GET("http://%s:%d/49872398432" % (BASEHOST,BASEPORT) )
+        # print("get404")
+        # print(req.code)
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 404)
 
@@ -178,6 +180,8 @@ class TestHTTPClient(unittest.TestCase):
         path = "abcdef/gjkd/dsadas"
         url = "http://%s:%d/%s" % (BASEHOST,BASEPORT, path)
         req = http.GET( url )
+        # print("get")
+        # print(req)
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
         self.assertTrue(req.body.find(path)>=0, "Data: [%s] " % req.body)
@@ -190,6 +194,8 @@ class TestHTTPClient(unittest.TestCase):
         path = "abcdef/gjkd/dsadas"
         url = "http://%s:%d/%s" % (BASEHOST,BASEPORT, path)
         req = http.GET( url )
+        # print("getheader:")
+        # print(req)
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
 

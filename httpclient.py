@@ -41,13 +41,18 @@ class HTTPClient(object):
         return None
 
     def get_code(self, data):
-        return None
+        line = data.split('\r\n')[0]
+        code = line.split(' ')[1]
+        #if don't use int can't pass test
+        return int(code)
 
     def get_headers(self,data):
-        return None
+        header = data.split("\r\n\r\n")[0]
+        return header
 
     def get_body(self, data):
-        return None
+        body = data.split("\r\n\r\n")[1]
+        return body
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -68,13 +73,46 @@ class HTTPClient(object):
         return buffer.decode('utf-8')
 
     def GET(self, url, args=None):
-        code = 500
-        body = ""
+        u = urllib.parse.urlparse(url)
+        host,port,path = u.hostname,u.port,u.path
+        if not port:
+            port = 80
+        if not path:
+            path = "/"
+        self.connect(host,port)
+        #add connection for fast(from discuss on eclass)
+        request = "GET "+path+" HTTP/1.1\r\nHost: "+host+"\r\nConnection: close\r\n\r\n"
+
+        self.sendall(request)
+        response = self.recvall(self.socket)
+        code = self.get_code(response)
+        body = self.get_body(response)
+        self.close()
         return HTTPResponse(code, body)
 
+
+
+
     def POST(self, url, args=None):
-        code = 500
+        u = urllib.parse.urlparse(url)
+        host,port,path = u.hostname,u.port,u.path
+        if not port:
+            port = 80
+        if not path:
+            path = "/"
+        self.connect(host,port)
         body = ""
+        if args != None:
+            for i in args:
+                body += i + "=" + args[i] +"&"
+        contentlen = len(body)
+        request = "POST "+path+" HTTP/1.1\r\nHost: "+host+"\r\nContent-Length: "+str(contentlen)+"\r\n\r\n"+body
+        
+        self.sendall(request)
+        response = self.recvall(self.socket)
+        code = self.get_code(response)
+        body = self.get_body(response)
+        self.close()
         return HTTPResponse(code, body)
 
     def command(self, url, command="GET", args=None):

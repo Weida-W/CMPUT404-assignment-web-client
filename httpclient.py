@@ -106,7 +106,7 @@ class HTTPClient(object):
             for i in args:
                 body += i + "=" + args[i] +"&"
         contentlen = len(body)
-        request = "POST "+path+" HTTP/1.1\r\nHost: "+host+"\r\nContent-Length: "+str(contentlen)+"\r\n\r\n"+body
+        request = "POST "+path+" HTTP/1.1\r\nHost: "+host+"\r\nContent-Length: "+str(contentlen)+"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n"+body
         
         self.sendall(request)
         response = self.recvall(self.socket)
